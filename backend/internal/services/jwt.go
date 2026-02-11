@@ -35,13 +35,14 @@ func GenerateJWT(id string) (string, error) {
 }
 
 // Verify JWT
-func VerifyJWT(tokenString, secretKey string) (*CustomClaims, error) {
+func VerifyJWT(tokenString string) (*CustomClaims, error) {
+	cfg := config.NewEnv()
 	claims := &CustomClaims{}
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(secretKey), nil
+		return []byte(cfg.JWT_SECRET), nil
 	})
 
 	if err != nil {
