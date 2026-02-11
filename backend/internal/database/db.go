@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/udaykumar-dhokia/proofdeck/internal/config"
@@ -14,16 +15,31 @@ var DB *gorm.DB
 func Connect() {
 	cfg := config.NewEnv()
 
-	dsn := cfg.DATABASE_URL
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+		cfg.DB_HOST,
+		cfg.DB_USER,
+		cfg.DB_PASSWORD,
+		cfg.DB_NAME,
+		cfg.DB_PORT,
+	)
 
 	var err error
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		PrepareStmt: false,
+	})
 
 	if err != nil {
 		log.Fatal("failed to connect database: ", err)
 	}
 
-	DB.AutoMigrate(&models.Company{})
+	if err := DB.AutoMigrate(
+		&models.Company{},
+		&models.Product{},
+	); err != nil {
+		log.Fatal("migration failed:", err)
+	}
+
 	log.Println("Connected to Database")
 
 }
