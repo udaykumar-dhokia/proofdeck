@@ -15,13 +15,15 @@ type RegisterResponse struct {
 	Error   string `json:"error"`
 }
 
-func Register(w http.ResponseWriter, r *http.Request) {
-	var user models.User
+func RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	var company models.Company
 
-	user.ID = uuid.New()
+	company.ID = uuid.New()
 
 	// Parse body
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	dec := json.NewDecoder(r.Body)
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(&company); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(RegisterResponse{
 			Message: "Invalid request",
@@ -31,7 +33,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check for the required fields
-	if user.Email == "" || user.Name == "" || user.Password == "" {
+	if company.Email == "" || company.Name == "" || company.Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(RegisterResponse{
 			Message: "Invalid request",
@@ -40,8 +42,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Hashing user's password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	// Hashing company's password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(company.Password), bcrypt.DefaultCost)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(RegisterResponse{
@@ -51,20 +53,20 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user.Password = string(hashedPassword)
+	company.Password = string(hashedPassword)
 
-	// Inserting the user's data to database
-	if err := services.CreateUser(&user); err != nil {
+	// Inserting the company's data to database
+	if err := services.CreateCompany(&company); err != nil {
 		w.WriteHeader(http.StatusConflict)
 		json.NewEncoder(w).Encode(RegisterResponse{
-			Message: "User already exists",
+			Message: "company already exists",
 			Error:   err.Error(),
 		})
 		return
 	}
 
 	// Generate JWT token
-	token, err := services.GenerateJWT(user.ID.String())
+	token, err := services.GenerateJWT(company.ID.String())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(RegisterResponse{

@@ -5,6 +5,6 @@ import (
 	"github.com/udaykumar-dhokia/proofdeck/internal/models"
 )
 
-func CreateUser(user *models.User) error {
+func CreateCompany(user *models.Company) error {
 	return database.DB.Create(user).Error
 }
