@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -8,6 +9,8 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/udaykumar-dhokia/proofdeck/internal/config"
 	"github.com/udaykumar-dhokia/proofdeck/internal/database"
+	"github.com/udaykumar-dhokia/proofdeck/internal/middlewares"
+	"github.com/udaykumar-dhokia/proofdeck/internal/routers"
 )
 
 func main() {
@@ -22,6 +25,19 @@ func main() {
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true,
 	}))
+
+	r.Use(middlewares.JsonContentTypeMiddleware)
+
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		data := struct {
+			Message string `json:"message"`
+		}{
+			Message: "Server is healthy.",
+		}
+		json.NewEncoder(w).Encode(data)
+	})
+
+	r.Mount("/auth", routers.AuthRouter())
 
 	log.Println("Server running on :8080")
 	database.Connect()

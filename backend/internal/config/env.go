@@ -9,6 +9,7 @@ import (
 type Env struct {
 	DATABASE_URL string `mapstructure:"DATABASE_URL"`
 	PORT         string `mapstructure:"PORT"`
+	JWT_SECRECT  string `mapstructure:"JWT_SECRET"`
 }
 
 func NewEnv() *Env {
