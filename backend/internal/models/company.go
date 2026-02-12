@@ -7,10 +7,12 @@ import (
 )
 
 type Company struct {
-	ID        uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `gorm:"uniqueIndex" json:"email"`
-	Password  string    `json:"password"`
-	Website   string    `json:"website"`
+	ID       uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
+	Name     string    `json:"name"`
+	Email    string    `gorm:"uniqueIndex" json:"email"`
+	Password string    `json:"password"`
+	Website  string    `json:"website"`
+
 	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }

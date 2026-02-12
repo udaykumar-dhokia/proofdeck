@@ -37,6 +37,8 @@ func Connect() {
 	if err := DB.AutoMigrate(
 		&models.Company{},
 		&models.Product{},
+		&models.Testimonial{},
+		&models.Response{},
 	); err != nil {
 		log.Fatal("migration failed:", err)
 	}

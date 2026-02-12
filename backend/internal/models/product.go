@@ -12,7 +12,8 @@ type Product struct {
 	Desc      string    `json:"desc"`
 	Website   string    `json:"website"`
 	CompanyId uuid.UUID `gorm:"type:uuid;not null" json:"companyId"`
-	Company   Company   `gorm:"foreignKey:CompanyId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"company"`
+	Company   Company   `gorm:"foreignKey:CompanyId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"`
+
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
