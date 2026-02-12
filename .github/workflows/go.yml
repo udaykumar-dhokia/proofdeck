@@ -20,6 +20,11 @@ jobs:
         with:
           go-version: '1.25'
 
+      # Verify dependencies
+      - name: Verify dependencies
+        run: go mod verify
+
+      # Cache Go modules
       - name: Cache Go modules
         uses: actions/cache@v3
         with:
@@ -30,14 +35,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Install golangci-lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.0
-      - name: Lint Go code
-        run: golangci-lint run ./...
+      # Run go vet
+      - name: Run go vet
+        run: go vet ./...
 
+      # Install staticcheck
+      - name: Install staticcheck
+        run: go install honnef.co/go/tools/cmd/staticcheck@latest
+
+      # Run staticcheck
+      - name: Run staticcheck
+        run: staticcheck ./...
+
+      # Install golint
+      - name: Install golint
+        run: go install golang.org/x/lint/golint@latest
+
+      # Run golint
+      - name: Run golint
+        run: golint ./...
+
+
+      # Build backend
       - name: Build
         run: go build -v ./...
 
+      # Run tests with race detection
       - name: Test
-        run: go test -v ./...
+        run: go test -race -vet=off ./...
