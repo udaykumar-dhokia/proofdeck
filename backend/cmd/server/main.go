@@ -39,6 +39,7 @@ func main() {
 
 	r.Mount("/api/v1/auth", routers.AuthRouter())
 	r.Mount("/api/v1/product", routers.ProductRouter())
+	r.Mount("/api/v1/testimonial", routers.TestimonialRouter())
 
 	log.Println("Server running on :8080")
 	database.Connect()

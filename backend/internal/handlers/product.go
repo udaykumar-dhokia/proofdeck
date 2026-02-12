@@ -16,7 +16,7 @@ type ProductResponse struct {
 }
 
 // Insert Handler
-func InsertHandler(w http.ResponseWriter, r *http.Request) {
+func InsertProductHandler(w http.ResponseWriter, r *http.Request) {
 
 	companyID, ok := r.Context().Value(middlewares.CompanyIDKey).(uuid.UUID)
 	if !ok {
@@ -43,9 +43,9 @@ func InsertHandler(w http.ResponseWriter, r *http.Request) {
 	product.CompanyId = uuid.UUID(companyID)
 
 	if err := services.CreateProduct(&product); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ProductResponse{
-			Message: "Invalid request",
+			Message: "Internal Server Error",
 			Error:   err.Error(),
 		})
 		return
@@ -59,7 +59,7 @@ func InsertHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Fetch All Products Handler
-func FetchAllHandler(w http.ResponseWriter, r *http.Request) {
+func FetchAllProductHandler(w http.ResponseWriter, r *http.Request) {
 
 	companyId, ok := r.Context().Value(middlewares.CompanyIDKey).(uuid.UUID)
 	if !ok {
