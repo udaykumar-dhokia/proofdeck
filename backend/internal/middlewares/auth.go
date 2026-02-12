@@ -7,7 +7,9 @@ import (
 	"github.com/udaykumar-dhokia/proofdeck/internal/services"
 )
 
-const UserIDKey string = "userID"
+type contextKey string
+
+const CompanyIDKey contextKey = "companyId"
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -21,9 +23,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		// Parse and validate
 		claims, err := services.VerifyJWT(cookie.Value)
+		if err != nil {
+			http.Error(w, "unauthorized", http.StatusUnauthorized)
+			return
+		}
 
 		// Inject the id into the context
-		ctx := context.WithValue(r.Context(), UserIDKey, claims.ID)
+		ctx := context.WithValue(r.Context(), CompanyIDKey, claims.ID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

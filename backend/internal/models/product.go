@@ -7,11 +7,12 @@ import (
 )
 
 type Product struct {
-	ID        uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	Name      string
-	Desc      string
-	Logo      string
-	CompanyId uuid.UUID `gorm:"type:uuid;not null"`
-	Company   Company   `gorm:"foreignKey:CompanyId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE"`
-	CreatedAt time.Time
+	ID        uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	Name      string    `json:"name"`
+	Desc      string    `json:"desc"`
+	Website   string    `json:"website"`
+	CompanyId uuid.UUID `gorm:"type:uuid;not null" json:"companyId"`
+	Company   Company   `gorm:"foreignKey:CompanyId;references:ID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"company"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }

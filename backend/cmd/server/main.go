@@ -37,7 +37,8 @@ func main() {
 		json.NewEncoder(w).Encode(data)
 	})
 
-	r.Mount("/auth", routers.AuthRouter())
+	r.Mount("/api/v1/auth", routers.AuthRouter())
+	r.Mount("/api/v1/product", routers.ProductRouter())
 
 	log.Println("Server running on :8080")
 	database.Connect()

@@ -7,15 +7,15 @@ import (
 )
 
 type Env struct {
-	PORT        string `mapstructure:"PORT"`
-	JWT_SECRET  string `mapstructure:"JWT_SECRET"`
-	DB_HOST     string `mapstructure:"DB_HOST"`
-	DB_PORT     string `mapstructure:"DB_PORT"`
-	DB_USER     string `mapstructure:"DB_USER"`
-	DB_PASSWORD string `mapstructure:"DB_PASSWORD"`
-	DB_NAME     string `mapstructure:"DB_NAME"`
+	PORT         string `mapstructure:"PORT"`
+	JWT_SECRET   string `mapstructure:"JWT_SECRET"`
+	DB_HOST      string `mapstructure:"DB_HOST"`
+	DB_PORT      string `mapstructure:"DB_PORT"`
+	DB_USER      string `mapstructure:"DB_USER"`
+	DB_PASSWORD  string `mapstructure:"DB_PASSWORD"`
+	DB_NAME      string `mapstructure:"DB_NAME"`
+	DATABASE_URL string `mapstructure:"DATABASE_URL"`
 }
-
 
 func NewEnv() *Env {
 	env := Env{}

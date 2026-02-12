@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/udaykumar-dhokia/proofdeck/internal/config"
@@ -15,14 +14,16 @@ var DB *gorm.DB
 func Connect() {
 	cfg := config.NewEnv()
 
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
-		cfg.DB_HOST,
-		cfg.DB_USER,
-		cfg.DB_PASSWORD,
-		cfg.DB_NAME,
-		cfg.DB_PORT,
-	)
+	// dsn := fmt.Sprintf(
+	// 	"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+	// 	cfg.DB_HOST,
+	// 	cfg.DB_USER,
+	// 	cfg.DB_PASSWORD,
+	// 	cfg.DB_NAME,
+	// 	cfg.DB_PORT,
+	// )
+
+	dsn := cfg.DATABASE_URL
 
 	var err error
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{

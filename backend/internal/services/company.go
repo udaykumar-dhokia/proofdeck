@@ -5,6 +5,10 @@ import (
 	"github.com/udaykumar-dhokia/proofdeck/internal/models"
 )
 
+func CreateCompany(user *models.Company) error {
+	return database.DB.Create(user).Error
+}
+
 func FetchCompanyByEmail(email string) (models.Company, error) {
 	var company models.Company
 
