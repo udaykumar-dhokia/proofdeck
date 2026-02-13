@@ -6,14 +6,17 @@ import { Button } from "@heroui/button";
 import { Checkbox } from "@heroui/checkbox";
 import { IconArrowBackUp, IconArrowUpRight } from "@tabler/icons-react";
 import Link from "next/link";
+import axiosClient from "@/utils/api";
+import { addToast } from "@heroui/toast";
+import { useRouter } from "next/navigation";
 
 export default function page() {
   const [password, setPassword] = React.useState("");
   const [submitted, setSubmitted] = React.useState<any | null>(null);
   const [errors, setErrors] = React.useState<any>({});
+  const router = useRouter();
 
-
-  const onSubmit = (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
 
@@ -37,6 +40,29 @@ export default function page() {
 
     setErrors({});
     setSubmitted(data);
+
+    try {
+      const payload = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        website: data.website,
+      }
+      const respose = await axiosClient.post("/auth/register", payload);
+      addToast({
+        title: "Register Success",
+        color: "success",
+        timeout: 3000,
+      })
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.log(error);
+      addToast({
+        title: error.response?.data?.message || "Register Failed",
+        color: "danger",
+        timeout: 3000,
+      })
+    }
   };
 
   return (
@@ -82,7 +108,7 @@ export default function page() {
             }}
             label="Wesbite"
             labelPlacement="inside"
-            name="name"
+            name="website"
             placeholder="Enter your wesbite"
           />
 
@@ -163,12 +189,6 @@ export default function page() {
               Login
             </Link>
           </p>
-
-          {submitted && (
-            <div className="text-xs text-default-500 mt-4">
-              <pre>{JSON.stringify(submitted, null, 2)}</pre>
-            </div>
-          )}
         </Form>
       </div>
 

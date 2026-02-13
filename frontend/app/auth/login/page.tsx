@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useState } from "react";
 import axiosClient from "@/utils/api";
 import { useRouter } from "next/navigation";
+import { addToast } from "@heroui/toast";
 
 export default function page() {
   const [password, setPassword] = useState("");
@@ -34,9 +35,20 @@ export default function page() {
         password: data.password,
       });
 
+      addToast({
+        title: "Login Success",
+        color: "success",
+        timeout: 3000,
+      })
+
       router.push("/dashboard");
 
     } catch (error: any) {
+      addToast({
+        title: error.response?.data?.message || "Invalid email or password",
+        color: "danger",
+        timeout: 3000,
+      })
       setErrors({
         email:
           error.response?.data?.message ||

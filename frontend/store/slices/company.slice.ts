@@ -16,13 +16,15 @@ interface CompanyState {
     isAuthenticated: boolean
     isLoading: boolean
     error: string | null
+    isInitialized: boolean
 }
 
 const initialState: CompanyState = {
     company: null,
     isAuthenticated: false,
     isLoading: false,
-    error: null
+    error: null,
+    isInitialized: false
 }
 
 export const fetchCompany = createAsyncThunk<Company>(
@@ -30,9 +32,20 @@ export const fetchCompany = createAsyncThunk<Company>(
     async (_, { rejectWithValue }) => {
         try {
             const response = await axiosClient.get("/company/")
-            return response.data
+            return response.data.company
         } catch (error: any) {
             return rejectWithValue(error.response?.data || "Failed to fetch company")
+        }
+    }
+)
+
+export const logoutCompany = createAsyncThunk(
+    "company/logout",
+    async (_, { rejectWithValue }) => {
+        try {
+            await axiosClient.get("/auth/logout")
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data || "Failed to logout company")
         }
     }
 )
@@ -51,12 +64,30 @@ const companySlice = createSlice({
                 state.isLoading = false
                 state.company = action.payload
                 state.isAuthenticated = true
+                state.isInitialized = true
             })
             .addCase(fetchCompany.rejected, (state, action) => {
                 state.isLoading = false
                 state.company = null
                 state.isAuthenticated = false
                 state.error = action.payload as string
+                state.isInitialized = true
+            })
+            .addCase(logoutCompany.fulfilled, (state) => {
+                state.company = null
+                state.isAuthenticated = false
+                state.isInitialized = true
+            })
+            .addCase(logoutCompany.rejected, (state, action) => {
+                state.isLoading = false
+                state.company = null
+                state.isAuthenticated = false
+                state.error = action.payload as string
+                state.isInitialized = true
+            })
+            .addCase(logoutCompany.pending, (state) => {
+                state.isLoading = true
+                state.error = null
             })
     }
 })
