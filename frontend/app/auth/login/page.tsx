@@ -1,63 +1,52 @@
 "use client";
-import React, { useEffect } from "react";
 import { Input } from "@heroui/input";
 import { Form } from "@heroui/form";
 import { Button } from "@heroui/button";
-import { IconArrowBackUp, IconArrowUpRight } from "@tabler/icons-react";
+import { IconArrowBackUp, IconArrowUpRight, IconQuote } from "@tabler/icons-react";
 import Link from "next/link";
+import { useState } from "react";
 import axiosClient from "@/utils/api";
-import { addToast } from "@heroui/toast";
+import { useRouter } from "next/navigation";
 
 export default function page() {
-  const [password, setPassword] = React.useState("");
-  const [submitted, setSubmitted] = React.useState<any | null>(null);
-  const [errors, setErrors] = React.useState<any>({});
+  const [password, setPassword] = useState("");
+  const [submitted, setSubmitted] = useState<any | null>(null);
+  const [errors, setErrors] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter()
 
-  const getPasswordError = (value: any) => {
-    if (value.length < 4) {
-      return "Password must be 4 characters or more";
-    }
-    if ((value.match(/[A-Z]/g) || []).length < 1) {
-      return "Password needs at least 1 uppercase letter";
-    }
-    if ((value.match(/[^a-z]/gi) || []).length < 1) {
-      return "Password needs at least 1 symbol";
-    }
-
-    return null;
-  };
-
-  const onSubmit = (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
 
-    const newErrors: any = {};
+    const data = Object.fromEntries(
+      new FormData(e.currentTarget)
+    ) as {
+      email: string;
+      password: string;
+    };
 
-    const passwordError = getPasswordError(data.password);
+    try {
+      setIsLoading(true);
+      setErrors({});
 
-    if (passwordError) {
-      newErrors.password = passwordError;
+      await axiosClient.post("/auth/login", {
+        email: data.email,
+        password: data.password,
+      });
+
+      router.push("/dashboard");
+
+    } catch (error: any) {
+      setErrors({
+        email:
+          error.response?.data?.message ||
+          "Invalid email or password",
+      });
+    } finally {
+      setIsLoading(false);
     }
-
-    if (data.name === "admin") {
-      newErrors.name = "Nice try! Choose a different username";
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-
-      return;
-    }
-
-    if (data.terms !== "true") {
-      setErrors({ terms: "Please accept the terms" });
-
-      return;
-    }
-
-    setErrors({});
-    setSubmitted(data);
   };
+
 
   return (
     <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
@@ -116,6 +105,7 @@ export default function page() {
           />
 
           <Button
+            isLoading={isLoading}
             endContent={<IconArrowUpRight size={18} />}
             className="w-full font-semibold"
             color="warning"
@@ -149,7 +139,6 @@ export default function page() {
           alt="Authentication background"
           className="absolute inset-0 h-full w-full object-cover"
         />
-
         <div className="absolute inset-0 bg-black/30" />
       </div>
     </div>

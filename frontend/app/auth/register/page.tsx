@@ -63,27 +63,27 @@ export default function page() {
             isRequired
             errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
-                return "Please enter company's name";
+                return "Please enter your name";
               }
               return errors.name;
             }}
             label="Name"
             labelPlacement="inside"
             name="name"
-            placeholder="Enter company's name"
+            placeholder="Enter your name"
           />
 
           <Input
             errorMessage={({ validationDetails }) => {
               if (validationDetails.valueMissing) {
-                return "Please enter company's wesbite";
+                return "Please enter your wesbite";
               }
               return errors.name;
             }}
             label="Wesbite"
             labelPlacement="inside"
             name="name"
-            placeholder="Enter company's wesbite"
+            placeholder="Enter your wesbite"
           />
 
           <Input
