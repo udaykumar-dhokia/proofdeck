@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 5173",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --fix"
@@ -16,6 +16,7 @@
     "@heroui/badge": "2.2.18",
     "@heroui/button": "2.2.30",
     "@heroui/card": "2.2.27",
+    "@heroui/checkbox": "^2.3.30",
     "@heroui/chip": "2.2.24",
     "@heroui/code": "2.2.23",
     "@heroui/divider": "2.2.22",
@@ -51,6 +52,8 @@
     "@heroui/user": "2.2.25",
     "@react-aria/ssr": "3.9.10",
     "@react-aria/visually-hidden": "3.8.29",
+    "@tabler/icons-react": "^3.36.1",
+    "axios": "^1.13.5",
     "clsx": "2.1.1",
     "framer-motion": "11.18.2",
     "intl-messageformat": "10.7.16",

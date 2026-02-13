@@ -1,56 +1,60 @@
 import { Link } from "@heroui/link";
-import { Snippet } from "@heroui/snippet";
-import { Code } from "@heroui/code";
-import { button as buttonStyles } from "@heroui/theme";
 
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
-import { GithubIcon } from "@/components/icons";
+import { Button } from "@heroui/button";
+import { IconArrowUpRight } from "@tabler/icons-react";
+import { Navbar } from "@/components/navbar";
 
 export default function Home() {
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-xl text-center justify-center">
-        <span className={title()}>Make&nbsp;</span>
-        <span className={title({ color: "violet" })}>beautiful&nbsp;</span>
-        <br />
-        <span className={title()}>
-          websites regardless of your design experience.
-        </span>
-        <div className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
+    <div className="">
+      <Navbar />
+      <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
+        <div className="inline-block max-w-3xl text-center justify-center">
+          <span className={title()}>Turn Your&nbsp;</span>
+          <span className={title({ color: "yellow" })}>Customers&nbsp;</span>
+          <br />
+          <span className={title()}>Into Your Best Salespeople</span>
+          <div className={subtitle({ class: "mt-4" })}>
+            Automatically collect, manage, and display powerful testimonials that
+            increase conversions — on autopilot.
+          </div>
         </div>
-      </div>
 
-      <div className="flex gap-3">
+        <div className="flex gap-3">
+          <Button
+            isExternal
+            as={Link}
+            color="warning"
+            className="text-sm font-normal text-black"
+            href={siteConfig.links.sponsor}
+            endContent={<IconArrowUpRight />}
+          >
+            Try Now - No Credit Card Required
+          </Button>
+          <Button
+            isExternal
+            as={Link}
+            className="text-sm font-normal text-default-600 bg-default-100"
+            href={siteConfig.links.sponsor}
+            variant="flat"
+          >
+            Know More
+          </Button>
+        </div>
+      </section>
+      <footer className="w-full flex items-center justify-center py-3">
         <Link
           isExternal
-          className={buttonStyles({
-            color: "primary",
-            radius: "full",
-            variant: "shadow",
-          })}
-          href={siteConfig.links.docs}
+          className="flex items-center gap-1 text-current"
+          href="https://heroui.com?utm_source=next-app-template"
+          title="heroui.com homepage"
         >
-          Documentation
+          <span className="text-default-600">Powered by</span>
+          <p className="text-warning">proofdeck</p>
         </Link>
-        <Link
-          isExternal
-          className={buttonStyles({ variant: "bordered", radius: "full" })}
-          href={siteConfig.links.github}
-        >
-          <GithubIcon size={20} />
-          GitHub
-        </Link>
-      </div>
-
-      <div className="mt-8">
-        <Snippet hideCopyButton hideSymbol variant="bordered">
-          <span>
-            Get started by editing <Code color="primary">app/page.tsx</Code>
-          </span>
-        </Snippet>
-      </div>
-    </section>
+      </footer>
+    </div >
   );
 }
