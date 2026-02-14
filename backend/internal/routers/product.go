@@ -12,6 +12,8 @@ func ProductRouter() *chi.Mux {
 
 	r.Post("/", handlers.InsertProductHandler)
 	r.Get("/", handlers.FetchAllProductHandler)
+	r.Delete("/{id}", handlers.DeleteProductByIDHandler)
+	r.Put("/{id}", handlers.UpdateProductByIDHandler)
 
 	return r
 }

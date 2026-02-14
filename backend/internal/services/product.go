@@ -15,3 +15,21 @@ func FetchAllProducts(companyId uuid.UUID) []models.Product {
 	database.DB.Find(&products).Where("company_id = ?", companyId)
 	return products
 }
+
+func FetchProductByID(id string) (models.Product, error) {
+	var product models.Product
+
+	result := database.DB.First(&product, "id = ?", id)
+	return product, result.Error
+}
+
+func DeleteProductByID(id string) error {
+	result := database.DB.Delete(&models.Product{}, "id = ?", id)
+	return result.Error
+}
+
+func UpdateProductByID(id string, updatedData map[string]interface{}) error {
+	return database.DB.Model(&models.Product{}).
+		Where("id = ?", id).
+		Updates(updatedData).Error
+}
