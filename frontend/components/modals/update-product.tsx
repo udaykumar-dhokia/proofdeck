@@ -91,7 +91,7 @@ const UpdateProduct = ({ isOpen, onOpenChange, product }: Props) => {
             <ModalBody>
               <Input
                 label="Product Name"
-                variant="bordered"
+                variant="flat"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -100,7 +100,7 @@ const UpdateProduct = ({ isOpen, onOpenChange, product }: Props) => {
                 className=""
                 label="Description"
                 placeholder="Enter your description"
-                variant="bordered"
+                variant="flat"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -117,7 +117,7 @@ const UpdateProduct = ({ isOpen, onOpenChange, product }: Props) => {
                   </div>
                 }
                 onChange={(e) => setWebsite(e.target.value)}
-                variant="bordered"
+                variant="flat"
               />
             </ModalBody>
 

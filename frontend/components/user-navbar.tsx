@@ -24,7 +24,6 @@ import { addToast } from "@heroui/toast"
 const navLinks = [
     { label: "Dashboard", href: "/dashboard" },
     { label: "Products", href: "/products" },
-    { label: "Testimonials", href: "/testimonials" },
 ]
 
 const UserNavbar = () => {

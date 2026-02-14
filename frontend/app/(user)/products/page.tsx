@@ -10,12 +10,20 @@ import { Card, CardHeader, CardBody, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import { Image } from "@heroui/image";
 import { Button } from "@heroui/button";
-import { IconPlus, IconSettings, IconTrash } from "@tabler/icons-react";
+import {
+  IconArrowUpRight,
+  IconPlus,
+  IconSettings,
+  IconTrash,
+} from "@tabler/icons-react";
 import AddProductDrawer from "@/components/drawers/add-product";
 import DeleteProduct from "@/components/modals/delete-product";
 import UpdateProduct from "@/components/modals/update-product";
 
+import { useRouter } from "next/navigation";
+
 const Page = () => {
+  const router = useRouter();
   const { isLoading, products, error } = useSelector(
     (state: RootState) => state.products,
   );
@@ -112,6 +120,17 @@ const Page = () => {
                     }}
                   >
                     <IconTrash />
+                  </Button>
+
+                  <Button
+                    color="default"
+                    variant="flat"
+                    onPress={() => {
+                      router.push(`/products/${product.id}/testimonials`);
+                    }}
+                    endContent={<IconArrowUpRight />}
+                  >
+                    View Testimonials
                   </Button>
                 </CardFooter>
               </Card>

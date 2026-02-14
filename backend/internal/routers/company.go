@@ -8,9 +8,10 @@ import (
 
 func CompanyRouter() *chi.Mux {
 	r := chi.NewRouter()
-	r.Use(middlewares.AuthMiddleware)
-
-	r.Get("/", handlers.FetchCompanyByIdHandler)
-
+	r.Group(func(r chi.Router) {
+		r.Use(middlewares.AuthMiddleware)
+		r.Get("/", handlers.FetchCompanyByIdHandler)
+		r.Get("/stats", handlers.FetchCompanyStatsHandler)
+	})
 	return r
 }

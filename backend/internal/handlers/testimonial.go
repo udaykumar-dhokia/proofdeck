@@ -12,8 +12,9 @@ import (
 )
 
 type TestimonialResponse struct {
-	Message string `json:"message"`
-	Error   string `json:"error"`
+	Message     string             `json:"message"`
+	Error       string             `json:"error"`
+	Testimonial *models.Testimonial `json:"testimonial,omitempty"`
 }
 
 func InsertTestimonialHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +34,7 @@ func InsertTestimonialHandler(w http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
 	if err := dec.Decode(&testimonial); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ProductResponse{
+		json.NewEncoder(w).Encode(TestimonialResponse{
 			Message: "Invalid request",
 			Error:   err.Error(),
 		})
@@ -44,7 +45,7 @@ func InsertTestimonialHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := services.CreateTestimonial(&testimonial); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ProductResponse{
+		json.NewEncoder(w).Encode(TestimonialResponse{
 			Message: "Internal Server Error",
 			Error:   err.Error(),
 		})
@@ -52,9 +53,10 @@ func InsertTestimonialHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(ProductResponse{
-		Message: "Testimonial created successfully",
-		Error:   "",
+	json.NewEncoder(w).Encode(TestimonialResponse{
+		Message:     "Testimonial created successfully",
+		Error:       "",
+		Testimonial: &testimonial,
 	})
 }
 

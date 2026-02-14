@@ -79,14 +79,14 @@ const AddProductDrawer: React.FC<Props> = ({ isOpen, onOpenChange }) => {
               <Input
                 label="Name"
                 placeholder="Enter product name"
-                variant="bordered"
+                variant="flat"
                 onChange={(e) => setName(e.target.value)}
               />
               <Textarea
                 className=""
                 label="Description"
                 placeholder="Enter your description"
-                variant="bordered"
+                variant="flat"
                 onChange={(e) => setDescription(e.target.value)}
               />
               <Input
@@ -101,7 +101,7 @@ const AddProductDrawer: React.FC<Props> = ({ isOpen, onOpenChange }) => {
                   </div>
                 }
                 onChange={(e) => setWebsite(e.target.value)}
-                variant="bordered"
+                variant="flat"
               />
             </DrawerBody>
             <DrawerFooter>

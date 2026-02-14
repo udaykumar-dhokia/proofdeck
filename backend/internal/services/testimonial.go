@@ -11,7 +11,7 @@ func CreateTestimonial(testimonial *models.Testimonial) error {
 
 func FetchAllTestimonialByProductID(product_id string) []models.Testimonial {
 	var testimonials []models.Testimonial
-	database.DB.Find(&testimonials).Where("product_id = ?", product_id)
+	database.DB.Where("product_id = ?", product_id).Find(&testimonials)
 	return testimonials
 }
 

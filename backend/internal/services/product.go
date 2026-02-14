@@ -12,7 +12,7 @@ func CreateProduct(product *models.Product) error {
 
 func FetchAllProducts(companyId uuid.UUID) []models.Product {
 	var products []models.Product
-	database.DB.Find(&products).Where("company_id = ?", companyId)
+	database.DB.Where("company_id = ?", companyId).Find(&products)
 	return products
 }
 

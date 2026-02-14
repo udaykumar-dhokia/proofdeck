@@ -17,6 +17,6 @@ type Testimonial struct {
 	IsRoleRequired    bool `json:"is_role_required" gorm:"default:false"`
 	IsCompanyRequired bool `json:"is_company_required" gorm:"default:false"`
 
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }

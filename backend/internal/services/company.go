@@ -33,3 +33,40 @@ func FetchCompanyByID(id uuid.UUID) (models.Company, error) {
 
 	return company, nil
 }
+
+type ProductStat struct {
+	ProductName string `json:"product_name"`
+	Count       int64  `json:"count"`
+}
+
+type CompanyStats struct {
+	TotalProducts          int64         `json:"total_products"`
+	TotalTestimonials      int64         `json:"total_testimonials"`
+	TestimonialsPerProduct []ProductStat `json:"testimonials_per_product"`
+}
+
+func GetCompanyStats(companyID uuid.UUID) (CompanyStats, error) {
+	var stats CompanyStats
+
+	if err := database.DB.Model(&models.Product{}).Where("company_id = ?", companyID).Count(&stats.TotalProducts).Error; err != nil {
+		return stats, err
+	}
+
+	if err := database.DB.Model(&models.Testimonial{}).
+		Joins("JOIN products ON products.id = testimonials.product_id").
+		Where("products.company_id = ?", companyID).
+		Count(&stats.TotalTestimonials).Error; err != nil {
+		return stats, err
+	}
+
+	if err := database.DB.Model(&models.Testimonial{}).
+		Select("products.name as product_name, count(testimonials.id) as count").
+		Joins("JOIN products ON products.id = testimonials.product_id").
+		Where("products.company_id = ?", companyID).
+		Group("products.name").
+		Scan(&stats.TestimonialsPerProduct).Error; err != nil {
+		return stats, err
+	}
+
+	return stats, nil
+}

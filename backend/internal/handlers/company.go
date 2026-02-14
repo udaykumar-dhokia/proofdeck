@@ -43,3 +43,28 @@ func FetchCompanyByIdHandler(w http.ResponseWriter, r *http.Request) {
 		Company: &company,
 	})
 }
+
+func FetchCompanyStatsHandler(w http.ResponseWriter, r *http.Request) {
+	companyID, ok := r.Context().Value(middlewares.CompanyIDKey).(uuid.UUID)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Unauthorized",
+			"error":   "user id missing",
+		})
+		return
+	}
+
+	stats, err := services.GetCompanyStats(companyID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Internal Server Error",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(stats)
+}
