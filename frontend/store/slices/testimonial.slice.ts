@@ -9,8 +9,10 @@ export type Testimonial = {
   is_name_required: boolean;
   is_role_required: boolean;
   is_company_required: boolean;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
+  unique_id: string;
 };
 
 interface TestimonialsState {
@@ -79,6 +81,15 @@ const testimonialSlice = createSlice({
         };
       }
     },
+    toggleTestimonialStatus: (state, action: PayloadAction<string>) => {
+      const index = state.testimonials.findIndex(
+        (t) => t.id === action.payload,
+      );
+      if (index !== -1) {
+        state.testimonials[index].is_active =
+          !state.testimonials[index].is_active;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -115,7 +126,11 @@ const testimonialSlice = createSlice({
   },
 });
 
-export const { addTestimonial, deleteTestimonial, updateTestimonial } =
-  testimonialSlice.actions;
+export const {
+  addTestimonial,
+  deleteTestimonial,
+  updateTestimonial,
+  toggleTestimonialStatus,
+} = testimonialSlice.actions;
 
 export default testimonialSlice.reducer;

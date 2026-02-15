@@ -10,7 +10,34 @@ import (
 	"github.com/udaykumar-dhokia/proofdeck/internal/middlewares"
 	"github.com/udaykumar-dhokia/proofdeck/internal/models"
 	"github.com/udaykumar-dhokia/proofdeck/internal/services"
+	"github.com/udaykumar-dhokia/proofdeck/internal/utils"
 )
+
+
+func FetchTestimonialByUniqueIDHandler(w http.ResponseWriter, r *http.Request) {
+	uniqueID := chi.URLParam(r, "unique_id")
+	if uniqueID == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(TestimonialResponse{
+			Message: "Bad Request",
+			Error:   "Missing unique_id",
+		})
+		return
+	}
+
+	testimonial, err := services.FetchTestimonialByUniqueID(uniqueID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(TestimonialResponse{
+			Message: "No such record found",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(testimonial)
+}
 
 func FetchAllTestimonialsHandler(w http.ResponseWriter, r *http.Request) {
 	companyID, ok := r.Context().Value(middlewares.CompanyIDKey).(uuid.UUID)
@@ -103,6 +130,7 @@ func InsertTestimonialHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	testimonial.ID = uuid.New()
+	testimonial.UniqueId = utils.GenerateUniqueId()
 
 	if err := services.CreateTestimonial(&testimonial); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -273,4 +301,47 @@ func UpdateTestimonialByIDHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(TestimonialResponse{
 		Message: "Updated successfully",
 	})
+}
+
+func ToggleTestimonialStateHandler(w http.ResponseWriter, r *http.Request){
+	_, ok := r.Context().Value(middlewares.CompanyIDKey).(uuid.UUID)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(TestimonialResponse{
+			Message: "Unauthorized",
+			Error:   "id missing",
+		})
+		return
+	}
+
+	id := chi.URLParam(r, "id")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(TestimonialResponse{
+			Message: "Missing product id",
+		})
+		return
+	}
+
+	if _, err := services.FetchTestimonialByID(id); err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(TestimonialResponse{
+			Message: "Testimonial not found",
+		})
+	}
+
+	if err := services.ToggleTestimonialState(id); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(TestimonialResponse{
+			Message: "Update failed",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(TestimonialResponse{
+		Message: "Updated successfully",
+	})
+
 }

@@ -41,6 +41,7 @@ func main() {
 	r.Mount("/api/v1/product", routers.ProductRouter())
 	r.Mount("/api/v1/testimonial", routers.TestimonialRouter())
 	r.Mount("/api/v1/company", routers.CompanyRouter())
+	r.Mount("/api/v1/response", routers.ResponseRouter())
 
 	log.Println("Server running on :8080")
 	database.Connect()

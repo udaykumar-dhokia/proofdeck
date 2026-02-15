@@ -9,7 +9,7 @@ import {
     ModalFooter,
 } from "@heroui/modal";
 import { Checkbox } from "@heroui/checkbox";
-import { Testimonial, updateTestimonial } from "@/store/slices/testimonial.slice";
+import { Testimonial, toggleTestimonialStatus, updateTestimonial } from "@/store/slices/testimonial.slice";
 import axiosClient from "@/utils/api";
 import { addToast } from "@heroui/toast";
 import { useDispatch } from "react-redux";
@@ -27,10 +27,10 @@ const UpdateTestimonial = ({ isOpen, onOpenChange, testimonial }: Props) => {
     const [isRoleRequired, setIsRoleRequired] = useState(false);
     const [isCompanyRequired, setIsCompanyRequired] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [isToggling, setIsToggling] = useState(false);
 
     const dispatch = useDispatch();
 
-    // ✅ Prefill
     useEffect(() => {
         if (testimonial && isOpen) {
             setTitle(testimonial.title || "");
@@ -40,6 +40,36 @@ const UpdateTestimonial = ({ isOpen, onOpenChange, testimonial }: Props) => {
             setIsCompanyRequired(testimonial.is_company_required);
         }
     }, [testimonial, isOpen]);
+
+    const handleToggleStatus = async (onClose: () => void) => {
+        if (!testimonial) return;
+
+        try {
+            setIsToggling(true);
+
+            const res = await axiosClient.put(`/testimonial/${testimonial.id}/toggle-status`);
+
+            dispatch(
+                toggleTestimonialStatus(testimonial.id),
+            );
+
+            addToast({
+                title: res.data.message || "",
+                timeout: 3000,
+                color: "success",
+            });
+
+            onClose();
+        } catch (error: any) {
+            addToast({
+                title: error.response?.data?.message || "Failed to updated testimonial",
+                timeout: 3000,
+                color: "danger",
+            });
+        } finally {
+            setIsToggling(false);
+        }
+    };
 
     const handleUpdate = async (onClose: () => void) => {
         if (!testimonial) return;
@@ -136,12 +166,13 @@ const UpdateTestimonial = ({ isOpen, onOpenChange, testimonial }: Props) => {
 
                         <ModalFooter>
                             <Button
-                                color="danger"
+                                color={testimonial?.is_active ? "danger" : "success"}
                                 variant="flat"
-                                onPress={onClose}
-                                isDisabled={loading}
+                                onPress={() => handleToggleStatus(onClose)}
+                                isDisabled={isToggling}
+                                isLoading={isToggling}
                             >
-                                Cancel
+                                {testimonial?.is_active ? "Disable" : "Enable"}
                             </Button>
 
                             <Button
@@ -149,6 +180,7 @@ const UpdateTestimonial = ({ isOpen, onOpenChange, testimonial }: Props) => {
                                 variant="flat"
                                 onPress={() => handleUpdate(onClose)}
                                 isLoading={loading}
+                                isDisabled={loading}
                             >
                                 Save
                             </Button>

@@ -12,11 +12,12 @@ import PreviewTestimonialModal from "@/components/modals/preview-testimonial";
 import DeleteTestimonial from "@/components/modals/delete-testimonial";
 import UpdateTestimonial from "@/components/modals/update-testimonial";
 import { Testimonial } from "@/store/slices/testimonial.slice";
-import { IconArrowBackUp, IconArrowUpRight, IconEye, IconPlus, IconSettings, IconTrash } from "@tabler/icons-react";
+import { IconArrowBackUp, IconArrowUpRhombus, IconArrowUpRight, IconEye, IconPlus, IconSettings, IconTrash } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Chip } from "@heroui/chip";
+import { Link } from "@heroui/link";
 
 const TestimonialsPage = () => {
     const { id } = useParams();
@@ -84,7 +85,7 @@ const TestimonialsPage = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {testimonials.filter(t => t.product_id === id).map((testimonial) => (
-                            <Card key={testimonial.id} className="max-w-[400px]" shadow="sm">
+                            <Card key={testimonial.id} className="max-w-[400px]" shadow="sm" isDisabled={!testimonial.is_active}>
                                 <CardHeader className="flex gap-3 justify-between">
                                     <div className="flex flex-col">
                                         <p className="text-md font-bold">{testimonial.title}</p>
@@ -92,7 +93,10 @@ const TestimonialsPage = () => {
                                             Created: {new Date(testimonial.created_at).toLocaleDateString()}
                                         </p>
                                     </div>
-                                    <Button isIconOnly variant="flat" onPress={() => handlePreview(testimonial)}><IconEye /></Button>
+                                    <div className="flex gap-2">
+                                        <Button isIconOnly variant="ghost" onPress={() => handlePreview(testimonial)}><IconEye /></Button>
+                                        <Button isIconOnly isExternal variant="flat" color="warning" as={Link} href={`${process.env.NEXT_PUBLIC_SUBMIT_URL}/submit/${testimonial.unique_id}`}><IconArrowUpRight /></Button>
+                                    </div>
                                 </CardHeader>
                                 <Divider />
                                 <CardBody>
@@ -138,7 +142,7 @@ const TestimonialsPage = () => {
                         ))}
                     </div>
                 )}
-            </section>
+            </section >
             <AddTestimonialDrawer
                 isOpen={isDrawerOpen}
                 onOpenChange={() => setIsDrawerOpen(false)}

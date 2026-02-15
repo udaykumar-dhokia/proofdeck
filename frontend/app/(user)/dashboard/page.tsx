@@ -51,10 +51,15 @@ const DashboardPage = () => {
                 count: testimonialsByProduct[p.id] || 0,
             }));
 
+        const active_testimonials = testimonials.filter((t) => t.is_active).length;
+        const inactive_testimonials = testimonials.filter((t) => !t.is_active).length;
+
         return {
             total_products,
             total_testimonials,
             testimonials_per_product,
+            active_testimonials,
+            inactive_testimonials,
         };
     }, [products, testimonials]);
 
@@ -99,6 +104,38 @@ const DashboardPage = () => {
                         </p>
                     </CardBody>
                 </Card>
+
+                <Card className="py-4" shadow="sm">
+                    <CardHeader className="pb-0 pt-2 px-4 flex-col items-start space-y-2">
+                        <p className="text-tiny uppercase font-bold text-default-500">
+                            Active Testimonials
+                        </p>
+                        <h4 className={title()}>
+                            {stats?.active_testimonials || 0}
+                        </h4>
+                    </CardHeader>
+                    <CardBody className="overflow-visible py-2">
+                        <p className="text-small text-default-500">
+                            Testimonials active
+                        </p>
+                    </CardBody>
+                </Card>
+
+                {/* <Card className="py-4" shadow="sm">
+                    <CardHeader className="pb-0 pt-2 px-4 flex-col items-start space-y-2">
+                        <p className="text-tiny uppercase font-bold text-default-500">
+                            Inactive Testimonials
+                        </p>
+                        <h4 className={title()}>
+                            {stats?.inactive_testimonials || 0}
+                        </h4>
+                    </CardHeader>
+                    <CardBody className="overflow-visible py-2">
+                        <p className="text-small text-default-500">
+                            Testimonials inactive
+                        </p>
+                    </CardBody>
+                </Card> */}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

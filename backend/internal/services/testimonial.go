@@ -35,6 +35,15 @@ func FetchTestimonialByID(id string) (models.Testimonial, error) {
 	return testimonial, nil
 }
 
+func FetchTestimonialByUniqueID(uniqueID string) (models.Testimonial, error) {
+	var testimonial models.Testimonial
+	result := database.DB.Where("unique_id = ?", uniqueID).First(&testimonial)
+	if result.Error != nil {
+		return models.Testimonial{}, result.Error
+	}
+	return testimonial, nil
+}
+
 func DeleteTestimonialByID(id string) error {
 	result := database.DB.Delete(&models.Testimonial{}, "id = ?", id)
 	return result.Error
@@ -42,4 +51,8 @@ func DeleteTestimonialByID(id string) error {
 
 func UpdateTestimonialByID(id string, updateData map[string]interface{}) error {
 	return database.DB.Model(&models.Testimonial{}).Where("id = ?", id).Updates(updateData).Error
+}
+
+func ToggleTestimonialState(id string) error {
+	return database.DB.Exec("UPDATE testimonials SET is_active = NOT is_active WHERE id = ?", id).Error
 }
