@@ -3,7 +3,7 @@ import Loader from "@/components/loader";
 import { subtitle, title } from "@/components/primitives";
 import TestimonialsChart from "@/components/charts/testimonials-chart";
 import TestimonialsPieChart from "@/components/charts/testimonials-pie-chart";
-import { fetchCompanyStats } from "@/store/slices/company.slice";
+import { fetchTestimonials, Testimonial } from "@/store/slices/testimonial.slice";
 import { fetchProducts } from "@/store/slices/product.slice";
 import { AppDispatch, RootState } from "@/store/store";
 import { Button } from "@heroui/button";
@@ -23,19 +23,42 @@ import { useDispatch, useSelector } from "react-redux";
 
 const DashboardPage = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { company, stats, isLoading: isStatsLoading } = useSelector(
-        (state: RootState) => state.company
-    );
+    const { company } = useSelector((state: RootState) => state.company);
     const { products, isLoading: isProductsLoading } = useSelector(
         (state: RootState) => state.products
     );
+    const { testimonials, isLoading: isTestimonialsLoading } = useSelector(
+        (state: RootState) => state.testimonials
+    );
 
     useEffect(() => {
-        dispatch(fetchCompanyStats());
         dispatch(fetchProducts());
+        dispatch(fetchTestimonials());
     }, [dispatch]);
 
-    if (isStatsLoading || isProductsLoading) return <Loader />;
+    const stats = React.useMemo(() => {
+        const total_products = products.length;
+        const total_testimonials = testimonials.length;
+
+        const testimonialsByProduct = testimonials.reduce((acc, t) => {
+            acc[t.product_id] = (acc[t.product_id] || 0) + 1;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const testimonials_per_product = products
+            .map((p) => ({
+                product_name: p.name,
+                count: testimonialsByProduct[p.id] || 0,
+            }));
+
+        return {
+            total_products,
+            total_testimonials,
+            testimonials_per_product,
+        };
+    }, [products, testimonials]);
+
+    if (isProductsLoading || isTestimonialsLoading) return <Loader />;
 
     return (
         <div className="max-w-5xl mx-auto px-6 py-10 space-y-8">

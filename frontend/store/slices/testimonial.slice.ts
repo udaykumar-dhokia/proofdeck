@@ -39,12 +39,45 @@ export const fetchTestimonialsByProductId = createAsyncThunk(
   },
 );
 
+export const fetchTestimonials = createAsyncThunk(
+  "testimonials/fetchAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axiosClient.get("/testimonial/");
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch testimonials",
+      );
+    }
+  },
+);
+
 const testimonialSlice = createSlice({
   name: "testimonials",
   initialState,
   reducers: {
     addTestimonial: (state, action: PayloadAction<Testimonial>) => {
       state.testimonials.push(action.payload);
+    },
+    deleteTestimonial: (state, action: PayloadAction<string>) => {
+      state.testimonials = state.testimonials.filter(
+        (t) => t.id !== action.payload,
+      );
+    },
+    updateTestimonial: (
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<Testimonial> }>,
+    ) => {
+      const index = state.testimonials.findIndex(
+        (t) => t.id === action.payload.id,
+      );
+      if (index !== -1) {
+        state.testimonials[index] = {
+          ...state.testimonials[index],
+          ...action.payload.changes,
+        };
+      }
     },
   },
   extraReducers: (builder) => {
@@ -63,10 +96,26 @@ const testimonialSlice = createSlice({
       .addCase(fetchTestimonialsByProductId.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
+      })
+      .addCase(fetchTestimonials.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(
+        fetchTestimonials.fulfilled,
+        (state, action: PayloadAction<Testimonial[]>) => {
+          state.isLoading = false;
+          state.testimonials = action.payload;
+        },
+      )
+      .addCase(fetchTestimonials.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
       });
   },
 });
 
-export const { addTestimonial } = testimonialSlice.actions;
+export const { addTestimonial, deleteTestimonial, updateTestimonial } =
+  testimonialSlice.actions;
 
 export default testimonialSlice.reducer;

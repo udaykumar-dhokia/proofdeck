@@ -105,17 +105,11 @@ func FetchAllProductHandler(w http.ResponseWriter, r *http.Request) {
 
 	products := services.FetchAllProducts(companyId)
 
-	err := json.NewEncoder(w).Encode(products)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ProductResponse{
-			Message: "Failed to fetch products",
-			Error:   err.Error(),
-		})
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(products); err != nil {
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // Delete Product By ID
@@ -157,7 +151,16 @@ func DeleteProductByIDHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateProductByIDHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+
+	_, ok := r.Context().Value(middlewares.CompanyIDKey).(uuid.UUID)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(ProductResponse{
+			Message: "Unauthorized",
+			Error:   "id missing",
+		})
+		return
+	}
 
 	id := chi.URLParam(r, "id")
 	if id == "" {

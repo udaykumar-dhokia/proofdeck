@@ -15,6 +15,14 @@ func FetchAllTestimonialByProductID(product_id string) []models.Testimonial {
 	return testimonials
 }
 
+func FetchAllTestimonialsByCompanyID(companyID string) ([]models.Testimonial, error) {
+	var testimonials []models.Testimonial
+	err := database.DB.Joins("JOIN products ON products.id = testimonials.product_id").
+		Where("products.company_id = ?", companyID).
+		Find(&testimonials).Error
+	return testimonials, err
+}
+
 func FetchTestimonialByID(id string) (models.Testimonial, error) {
 	var testimonial models.Testimonial
 
@@ -30,4 +38,8 @@ func FetchTestimonialByID(id string) (models.Testimonial, error) {
 func DeleteTestimonialByID(id string) error {
 	result := database.DB.Delete(&models.Testimonial{}, "id = ?", id)
 	return result.Error
+}
+
+func UpdateTestimonialByID(id string, updateData map[string]interface{}) error {
+	return database.DB.Model(&models.Testimonial{}).Where("id = ?", id).Updates(updateData).Error
 }

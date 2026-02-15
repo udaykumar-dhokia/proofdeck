@@ -11,9 +11,11 @@ func TestimonialRouter() *chi.Mux {
 	r.Use(middlewares.AuthMiddleware)
 
 	r.Post("/", handlers.InsertTestimonialHandler)
+	r.Get("/", handlers.FetchAllTestimonialsHandler)
 	r.Get("/p/{product_id}", handlers.FetchAllTestimonialByProductIDHandler)
 	r.Get("/{id}", handlers.FetchTestimonialByIDHandler)
 	r.Delete("/{id}", handlers.DeleteTestimonialByIDHandler)
+	r.Put("/{id}", handlers.UpdateTestimonialByIDHandler)
 
 	return r
 }

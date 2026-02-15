@@ -9,8 +9,10 @@ import { Card, CardBody, CardFooter, CardHeader } from "@heroui/card";
 import { Divider } from "@heroui/divider";
 import AddTestimonialDrawer from "@/components/drawers/add-testimonial";
 import PreviewTestimonialModal from "@/components/modals/preview-testimonial";
+import DeleteTestimonial from "@/components/modals/delete-testimonial";
+import UpdateTestimonial from "@/components/modals/update-testimonial";
 import { Testimonial } from "@/store/slices/testimonial.slice";
-import { IconArrowBackUp, IconArrowLeft, IconArrowUpRight, IconEye, IconPlus, IconSettings, IconTrash } from "@tabler/icons-react";
+import { IconArrowBackUp, IconArrowUpRight, IconEye, IconPlus, IconSettings, IconTrash } from "@tabler/icons-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +27,8 @@ const TestimonialsPage = () => {
     );
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [isUpdateOpen, setIsUpdateOpen] = useState(false);
     const [selectedTestimonial, setSelectedTestimonial] = useState<Testimonial | null>(null);
 
     const handlePreview = (testimonial: Testimonial) => {
@@ -73,13 +77,13 @@ const TestimonialsPage = () => {
                     </div>
                 </div>
 
-                {(testimonials?.length || 0) === 0 ? (
+                {(testimonials?.filter(t => t.product_id === id).length || 0) === 0 ? (
                     <div className="text-center text-gray-500 py-20">
                         No testimonials found for this product.
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {testimonials.map((testimonial) => (
+                        {testimonials.filter(t => t.product_id === id).map((testimonial) => (
                             <Card key={testimonial.id} className="max-w-[400px]" shadow="sm">
                                 <CardHeader className="flex gap-3 justify-between">
                                     <div className="flex flex-col">
@@ -104,10 +108,10 @@ const TestimonialsPage = () => {
                                     <Button
                                         isIconOnly
                                         variant="flat"
-                                    // onPress={() => {
-                                    //     setSelectedId(product.id);
-                                    //     setIsEditOpen(true);
-                                    // }}
+                                        onPress={() => {
+                                            setSelectedTestimonial(testimonial);
+                                            setIsUpdateOpen(true);
+                                        }}
                                     >
                                         <IconSettings />
                                     </Button>
@@ -115,6 +119,10 @@ const TestimonialsPage = () => {
                                         isIconOnly
                                         className="text-danger"
                                         variant="flat"
+                                        onPress={() => {
+                                            setSelectedTestimonial(testimonial);
+                                            setIsDeleteOpen(true);
+                                        }}
                                     >
                                         <IconTrash />
                                     </Button>
@@ -139,6 +147,16 @@ const TestimonialsPage = () => {
             <PreviewTestimonialModal
                 isOpen={isPreviewOpen}
                 onOpenChange={() => setIsPreviewOpen(false)}
+                testimonial={selectedTestimonial}
+            />
+            <DeleteTestimonial
+                isOpen={isDeleteOpen}
+                onOpenChange={setIsDeleteOpen}
+                testimonialId={selectedTestimonial?.id || ""}
+            />
+            <UpdateTestimonial
+                isOpen={isUpdateOpen}
+                onOpenChange={setIsUpdateOpen}
                 testimonial={selectedTestimonial}
             />
         </>
